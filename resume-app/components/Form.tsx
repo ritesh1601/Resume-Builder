@@ -84,11 +84,15 @@ const Form =() => {
   });
 
   const [latex, setLatex] = useState<string>("");
+  const [copyStatus, setCopyStatus] = useState<string>('idle');
 
   useEffect(() => {
     setFormData((prev) => ({ ...prev, internships }));
+  }, [internships]);
+
+  useEffect(() => {
     setLatex(generateLatex({ ...formData, education: formData.education }));
-  }, [formData, formData.education, internships]);
+  }, [formData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -285,12 +289,29 @@ const Form =() => {
             <div className="p-6 bg-gray-50 border-t border-gray-200">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-bold text-[#0F4539]">LaTeX Preview</h3>
-                <button
-                  onClick={handleDownload}
-                  className="bg-[#0E5484] text-white px-4 py-2 rounded-md font-semibold hover:bg-[#0a4066] text-sm flex items-center gap-2"
-                >
-                  <span role="img" aria-label="download">📥</span> Download .tex
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleDownload}
+                    className="bg-[#0E5484] text-white px-4 py-2 rounded-md font-semibold hover:bg-[#0a4066] text-sm flex items-center gap-2"
+                  >
+                    <span role="img" aria-label="download">📥</span> Download .tex
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(latex);
+                        setCopyStatus('copied');
+                        setTimeout(() => setCopyStatus('idle'), 1500);
+                      } catch {
+                        setCopyStatus('error');
+                        setTimeout(() => setCopyStatus('idle'), 1500);
+                      }
+                    }}
+                    className={`bg-[#0E5484] text-white px-4 py-2 rounded-md font-semibold hover:bg-[#0a4066] text-sm flex items-center gap-2 ${copyStatus === 'copied' ? 'bg-green-600' : ''}`}
+                  >
+                    <span role="img" aria-label="copy">📋</span> {copyStatus === 'copied' ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
               </div>
               <pre className="bg-gray-800 text-gray-100 p-5 rounded-lg font-mono text-xs leading-relaxed whitespace-pre-wrap h-72 overflow-auto border border-gray-700">
                 {latex}
