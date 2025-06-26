@@ -1,26 +1,88 @@
-"use client"
-import React from "react";
+"use client";
 
-type Props = {
-  formData: {
-    educationInstitution: string;
-    educationDuration: string;
-    educationDegree: string;
-    educationGrade: string;
-    educationLocation: string;
-  };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+import React from "react";
+import { Plus, Trash } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+type EducationEntry = {
+  educationInstitution: string;
+  educationDuration: string;
+  educationDegree: string;
+  educationGrade: string;
+  educationLocation: string;
 };
 
-const EducationSection: React.FC<Props> = ({ formData, handleChange }) => (
-  <div className="mb-8">
-    <h2 className="text-lg font-bold mb-2">🎓 Education</h2>
-    <input name="educationInstitution" value={formData.educationInstitution} onChange={handleChange} placeholder="Institution Name *" className="input" />
-    <input name="educationDuration" value={formData.educationDuration} onChange={handleChange} placeholder="Duration *" className="input" />
-    <input name="educationDegree" value={formData.educationDegree} onChange={handleChange} placeholder="Degree & Major *" className="input" />
-    <input name="educationGrade" value={formData.educationGrade} onChange={handleChange} placeholder="Grade (optional)" className="input" />
-    <input name="educationLocation" value={formData.educationLocation} onChange={handleChange} placeholder="Location *" className="input" />
-  </div>
-);
+type Props = {
+  formData: EducationEntry[];
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
+  addEntry: () => void;
+  deleteEntry: (index: number) => void;
+};
 
-export default EducationSection; 
+const EducationSection: React.FC<Props> = ({ formData, handleChange, addEntry, deleteEntry }) => {
+  return (
+    <div className="space-y-6">
+      {formData.map((entry, index) => (
+        <div
+          key={index}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-xl shadow-sm bg-white dark:bg-zinc-900 relative"
+        >
+          <Button
+            type="button"
+            variant="destructive"
+            size="icon"
+            onClick={() => deleteEntry(index)}
+            className="absolute top-2 right-2"
+            aria-label="Delete education entry"
+          >
+            <Trash className="w-4 h-4" />
+          </Button>
+          <input
+            name="educationInstitution"
+            value={entry.educationInstitution}
+            onChange={(e) => handleChange(e, index)}
+            placeholder="Institution Name *"
+            className="input border px-3 py-2 rounded-md w-full dark:bg-zinc-800 dark:text-white"
+          />
+          <input
+            name="educationDuration"
+            value={entry.educationDuration}
+            onChange={(e) => handleChange(e, index)}
+            placeholder="Duration *"
+            className="input border px-3 py-2 rounded-md w-full dark:bg-zinc-800 dark:text-white"
+          />
+          <input
+            name="educationDegree"
+            value={entry.educationDegree}
+            onChange={(e) => handleChange(e, index)}
+            placeholder="Degree & Major *"
+            className="input border px-3 py-2 rounded-md w-full dark:bg-zinc-800 dark:text-white"
+          />
+          <input
+            name="educationGrade"
+            value={entry.educationGrade}
+            onChange={(e) => handleChange(e, index)}
+            placeholder="Grade (optional)"
+            className="input border px-3 py-2 rounded-md w-full dark:bg-zinc-800 dark:text-white"
+          />
+          <input
+            name="educationLocation"
+            value={entry.educationLocation}
+            onChange={(e) => handleChange(e, index)}
+            placeholder="Location *"
+            className="input border px-3 py-2 rounded-md w-full dark:bg-zinc-800 dark:text-white"
+          />
+        </div>
+      ))}
+
+      <button
+        onClick={addEntry}
+        className="flex items-center gap-2 text-green-600 hover:text-green-800 dark:hover:text-green-400 transition"
+      >
+        <Plus className="w-5 h-5" /> Add More Education
+      </button>
+    </div>
+  );
+};
+
+export default EducationSection;
